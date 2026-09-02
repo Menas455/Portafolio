@@ -15,7 +15,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="text-gray-500 dark:text-gray-400 text-sm font-medium text-center md:text-left">
-          &copy; {currentYear} Michael Mena. Todos los derechos reservados.
+          &copy; {currentYear} Michael Mena. Todos los derechos reservados. 
         </div>
 
         {/* Redes Sociales */}
