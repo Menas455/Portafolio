@@ -10,9 +10,11 @@ import {
   FiLayers, 
   FiMessageSquare,
   FiMoon,
-  FiSun
+  FiSun,
+  FiLogOut
 } from "react-icons/fi";
 import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 const navItems = [
   { id: "home", icon: FiHome, label: "Inicio" },
@@ -27,9 +29,22 @@ export default function Sidebar() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [session, setSession] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
+
+    // Verificar sesión inicial
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Escuchar cambios (login/logout)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
 
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight / 3;
@@ -50,7 +65,10 @@ export default function Sidebar() {
     window.addEventListener("scroll", handleScroll);
     handleScroll(); // Chequeo inicial
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -99,16 +117,41 @@ export default function Sidebar() {
         >
           {mounted && theme === "dark" ? <FiSun size={22} /> : <FiMoon size={22} />}
         </button>
+
+        {/* Logout - Solo visible en móvil si hay sesión */}
+        {session && (
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="text-red-500 hover:text-red-600 transition-colors lg:hidden flex-shrink-0"
+            title="Cerrar Sesión"
+          >
+            <FiLogOut size={22} />
+          </button>
+        )}
       </nav>
 
-      {/* Theme Toggle - Pinned to bottom on desktop */}
-      <button 
-        onClick={toggleTheme}
-        className="hidden lg:flex items-center justify-center w-12 h-12 rounded-full text-[#353252] dark:text-[#f2f2f2] hover:text-[#FF4C60] dark:hover:text-[#FF4C60] hover:bg-gray-50 dark:hover:bg-[#2b2b36] transition-all duration-300"
-        title="Alternar Tema"
-      >
-        {mounted && theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
-      </button>
+      {/* Controles del fondo (Escritorio) */}
+      <div className="hidden lg:flex flex-col items-center gap-4">
+        {/* Logout - Pinned to bottom on desktop si hay sesión */}
+        {session && (
+          <button 
+            onClick={() => supabase.auth.signOut()}
+            className="flex items-center justify-center w-12 h-12 rounded-full text-red-500 hover:text-white hover:bg-red-500 transition-all duration-300 shadow-sm"
+            title="Cerrar Sesión"
+          >
+            <FiLogOut size={22} />
+          </button>
+        )}
+
+        {/* Theme Toggle - Pinned to bottom on desktop */}
+        <button 
+          onClick={toggleTheme}
+          className="flex items-center justify-center w-12 h-12 rounded-full text-[#353252] dark:text-[#f2f2f2] hover:text-[#FF4C60] dark:hover:text-[#FF4C60] hover:bg-gray-50 dark:hover:bg-[#2b2b36] transition-all duration-300"
+          title="Alternar Tema"
+        >
+          {mounted && theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
+        </button>
+      </div>
 
       {/* Custom CSS to hide scrollbar but allow scrolling on mobile */}
       <style dangerouslySetInnerHTML={{__html: `
