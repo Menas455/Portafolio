@@ -65,8 +65,8 @@ export default function Sidebar() {
         <span className="text-[#6C6CE5] relative z-10 group-hover:scale-110 transition-transform duration-300">S</span>
       </Link>
 
-      {/* Navigation - Horizontal scroll on mobile, vertical stack on desktop */}
-      <nav className="flex lg:flex-col items-center justify-between lg:justify-center w-full lg:w-auto h-full lg:h-auto overflow-x-auto overflow-y-hidden px-6 lg:px-0 gap-8 lg:gap-8 scrollbar-hide">
+      {/* Navigation - Distribuido parejo en móvil, apilado vertical en desktop */}
+      <nav className="flex lg:flex-col items-center justify-around lg:justify-center w-full lg:w-auto h-full lg:h-auto px-4 sm:px-6 lg:px-0 lg:gap-8">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeSection === item.id;
@@ -82,7 +82,7 @@ export default function Sidebar() {
               }`}
               title={item.label}
             >
-              <Icon size={24} />
+              <Icon size={22} className="lg:w-6 lg:h-6" />
               {/* Indicador de sección activa */}
               {isActive && (
                 <span className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-[#FF4C60] rounded-full lg:-right-4 lg:left-auto lg:top-1/2 lg:-translate-y-1/2 lg:bottom-auto"></span>
@@ -94,10 +94,10 @@ export default function Sidebar() {
         {/* Theme Toggle - Inside nav on mobile for easy access */}
         <button 
           onClick={toggleTheme}
-          className="text-[#353252] dark:text-[#f2f2f2] hover:text-[#FF4C60] dark:hover:text-[#FF4C60] transition-colors lg:hidden flex-shrink-0 ml-4"
+          className="text-[#353252] dark:text-[#f2f2f2] hover:text-[#FF4C60] dark:hover:text-[#FF4C60] transition-colors lg:hidden flex-shrink-0"
           title="Alternar Tema"
         >
-          {mounted && theme === "dark" ? <FiSun size={24} /> : <FiMoon size={24} />}
+          {mounted && theme === "dark" ? <FiSun size={22} /> : <FiMoon size={22} />}
         </button>
       </nav>
 
